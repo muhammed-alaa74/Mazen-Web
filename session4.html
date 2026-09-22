@@ -1,0 +1,385 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>السيشن 4 — MEZO Photography</title><style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f7f5f1;color:#191919;font-family:inherit}
+.gallery-top{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);background:rgba(247,245,241,.92);border-bottom:1px solid rgba(0,0,0,.08)}
+.gallery-top-inner{max-width:1250px;margin:auto;min-height:74px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.gallery-title{font-weight:800;font-size:1.05rem}.gallery-count{font-size:.85rem;color:#777}
+.gallery-back{display:inline-flex;gap:8px;text-decoration:none;color:inherit;font-weight:700;font-size:.9rem}
+.gallery-grid{max-width:1250px;margin:0 auto;padding:34px 22px 80px;columns:3 330px;column-gap:18px}
+.gallery-item{position:relative;break-inside:avoid;margin:0 0 18px;cursor:pointer;border-radius:14px;overflow:hidden;background:#ddd}
+.gallery-item img{display:block;width:100%;height:auto;transition:transform .35s ease}.gallery-item:hover img{transform:scale(1.015)}
+.gallery-item .download-mini{position:absolute;right:12px;bottom:12px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.72);color:#fff;text-decoration:none;opacity:0;transition:opacity .2s}
+.gallery-item:hover .download-mini{opacity:1}
+.gallery-lightbox{position:fixed;inset:0;z-index:100;background:rgba(12,12,12,.94);display:none;align-items:center;justify-content:center;padding:80px 34px 34px}
+.gallery-lightbox.open{display:flex}.gallery-lightbox img{max-width:92vw;max-height:82vh;object-fit:contain}
+.lightbox-close,.lightbox-download{position:fixed;top:18px;width:48px;height:48px;border:0;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-size:22px;cursor:pointer}
+.lightbox-close{right:20px}.lightbox-download{right:80px;font-size:18px}.lightbox-prev,.lightbox-next{position:fixed;top:50%;transform:translateY(-50%);width:52px;height:52px;border:0;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:30px;cursor:pointer}
+.lightbox-prev{left:18px}.lightbox-next{right:18px}.lightbox-meta{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);color:#fff;font-size:.86rem;opacity:.75}
+@media(max-width:760px){.gallery-grid{columns:2 180px;padding:20px 12px 50px;column-gap:10px}.gallery-item{margin-bottom:10px;border-radius:10px}.gallery-item .download-mini{opacity:1;width:36px;height:36px;right:8px;bottom:8px}.gallery-top-inner{min-height:64px;padding:0 14px}.gallery-lightbox{padding:70px 10px 20px}.gallery-lightbox img{max-width:96vw;max-height:80vh}.lightbox-prev,.lightbox-next{width:42px;height:42px;font-size:24px}}
+</style>
+<style id="cinema-style">
+  .cinema-launch{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.15);
+    background:#1a1a1a;
+    color:#fff;
+    border-radius:999px;
+    padding:13px 20px;
+    margin:0 0 28px;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font:600 13px/1 var(--mono,monospace);
+    letter-spacing:.01em;
+    cursor:pointer;
+    transition:transform .25s ease,background .25s ease,box-shadow .25s ease;
+  }
+  .cinema-launch:hover{
+    transform:translateY(-2px);
+    background:#252525;
+    box-shadow:0 12px 30px rgba(0,0,0,.12);
+  }
+  .cinema-play{
+    width:28px;height:28px;border-radius:50%;
+    display:grid;place-items:center;
+    background:var(--accent,#e8792e);
+    font-size:10px;
+    padding-left:2px;
+  }
+
+  .cinema-overlay{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    background:
+      radial-gradient(circle at 50% 45%,rgba(255,255,255,.045),transparent 42%),
+      #090909;
+    color:#fff;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    transition:opacity .35s ease,visibility .35s ease;
+  }
+  .cinema-overlay.is-open{
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+  }
+  .cinema-top{
+    position:absolute;
+    top:0;left:0;right:0;
+    z-index:4;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:24px clamp(18px,4vw,54px);
+    background:linear-gradient(#090909,rgba(9,9,9,0));
+  }
+  .cinema-title{
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:.03em;
+  }
+  .cinema-counter{
+    font:11px/1 var(--mono,monospace);
+    opacity:.65;
+  }
+  .cinema-close{
+    position:absolute;
+    top:60px;right:clamp(18px,4vw,54px);
+    z-index:6;
+    width:42px;height:42px;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:50%;
+    background:rgba(255,255,255,.06);
+    color:#fff;
+    font-size:28px;
+    line-height:1;
+    cursor:pointer;
+    backdrop-filter:blur(8px);
+  }
+  .cinema-stage{
+    position:absolute;
+    inset:76px 74px 120px;
+    display:grid;
+    place-items:center;
+  }
+  .cinema-photo-wrap{
+    width:100%;height:100%;
+    display:grid;place-items:center;
+  }
+  .cinema-photo-wrap img{
+    max-width:100%;
+    max-height:100%;
+    width:auto;height:auto;
+    object-fit:contain;
+    border-radius:4px;
+    box-shadow:0 22px 80px rgba(0,0,0,.42);
+    user-select:none;
+    -webkit-user-drag:none;
+    opacity:0;
+    transform:scale(.985);
+    transition:opacity .35s ease,transform .45s ease;
+  }
+  .cinema-photo-wrap img.is-visible{
+    opacity:1;
+    transform:scale(1);
+  }
+  .cinema-nav{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:5;
+    width:48px;height:72px;
+    border:0;
+    background:rgba(255,255,255,.055);
+    color:#fff;
+    font-size:42px;
+    font-weight:300;
+    border-radius:14px;
+    cursor:pointer;
+    backdrop-filter:blur(10px);
+    transition:background .2s ease,transform .2s ease;
+  }
+  .cinema-nav:hover{background:rgba(255,255,255,.12);}
+  .cinema-prev{left:18px;}
+  .cinema-next{right:18px;}
+  .cinema-bottom{
+    position:absolute;
+    left:clamp(18px,4vw,54px);
+    right:clamp(18px,4vw,54px);
+    bottom:18px;
+    z-index:6;
+  }
+  .cinema-controls{
+    display:flex;gap:8px;
+    margin-bottom:12px;
+  }
+  .cinema-control{
+    width:40px;height:36px;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:10px;
+    background:rgba(255,255,255,.06);
+    color:#fff;
+    cursor:pointer;
+    font:700 14px/1 var(--mono,monospace);
+  }
+  .cinema-progress{
+    height:2px;
+    width:100%;
+    background:rgba(255,255,255,.13);
+    overflow:hidden;
+    border-radius:99px;
+  }
+  .cinema-progress span{
+    display:block;height:100%;width:0;
+    background:var(--accent,#e8792e);
+    transition:width .35s ease;
+  }
+  .cinema-hint{
+    margin-top:10px;
+    text-align:right;
+    color:rgba(255,255,255,.42);
+    font:10px/1.5 var(--mono,monospace);
+  }
+
+  @media(max-width:700px){
+    .cinema-launch{
+      width:100%;
+      justify-content:center;
+      margin-bottom:20px;
+      padding:14px 18px;
+    }
+    .cinema-top{padding:18px 16px;}
+    .cinema-title{font-size:12px;}
+    .cinema-close{
+      top:53px;right:14px;
+      width:38px;height:38px;
+      font-size:25px;
+    }
+    .cinema-stage{
+      inset:76px 12px 132px;
+    }
+    .cinema-nav{
+      top:auto;
+      bottom:78px;
+      transform:none;
+      width:44px;height:42px;
+      font-size:32px;
+      border-radius:11px;
+    }
+    .cinema-prev{left:14px;}
+    .cinema-next{right:14px;}
+    .cinema-bottom{
+      left:14px;right:14px;bottom:14px;
+    }
+    .cinema-controls{margin-bottom:9px;}
+    .cinema-hint{display:none;}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    .cinema-overlay,.cinema-photo-wrap img{transition:none!important;}
+  }
+</style>
+
+</head><body>
+<header class="gallery-top"><div class="gallery-top-inner"><a class="gallery-back" href="index.html">← رجوع</a><div class="gallery-title">السيشن 4</div><div class="gallery-count">30 صورة</div></div></header>
+<main class="gallery-grid"><figure class="gallery-item" data-src="images/sessions/session4/1023654190323935086.jpg"><img src="images/sessions/session4/1023654190323935086.jpg" alt="صورة 1" loading="lazy"><a class="download-mini" href="images/sessions/session4/1023654190323935086.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/1113092864237870432.jpg"><img src="images/sessions/session4/1113092864237870432.jpg" alt="صورة 2" loading="lazy"><a class="download-mini" href="images/sessions/session4/1113092864237870432.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/1fb8f3d4954ae157a373582797ffbb6a.jpg"><img src="images/sessions/session4/1fb8f3d4954ae157a373582797ffbb6a.jpg" alt="صورة 3" loading="lazy"><a class="download-mini" href="images/sessions/session4/1fb8f3d4954ae157a373582797ffbb6a.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/295337688085142286.jpg"><img src="images/sessions/session4/295337688085142286.jpg" alt="صورة 4" loading="lazy"><a class="download-mini" href="images/sessions/session4/295337688085142286.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/368098969565459644.jpg"><img src="images/sessions/session4/368098969565459644.jpg" alt="صورة 5" loading="lazy"><a class="download-mini" href="images/sessions/session4/368098969565459644.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/4777.jpg"><img src="images/sessions/session4/4777.jpg" alt="صورة 6" loading="lazy"><a class="download-mini" href="images/sessions/session4/4777.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/478648266667275761.jpg"><img src="images/sessions/session4/478648266667275761.jpg" alt="صورة 7" loading="lazy"><a class="download-mini" href="images/sessions/session4/478648266667275761.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/50f9b194e47b8446e0b0f169a042e5d5.jpg"><img src="images/sessions/session4/50f9b194e47b8446e0b0f169a042e5d5.jpg" alt="صورة 8" loading="lazy"><a class="download-mini" href="images/sessions/session4/50f9b194e47b8446e0b0f169a042e5d5.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/546131892330156063.jpg"><img src="images/sessions/session4/546131892330156063.jpg" alt="صورة 9" loading="lazy"><a class="download-mini" href="images/sessions/session4/546131892330156063.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/554927985360550297.jpg"><img src="images/sessions/session4/554927985360550297.jpg" alt="صورة 10" loading="lazy"><a class="download-mini" href="images/sessions/session4/554927985360550297.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/574701602467697040.jpg"><img src="images/sessions/session4/574701602467697040.jpg" alt="صورة 11" loading="lazy"><a class="download-mini" href="images/sessions/session4/574701602467697040.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/635711303695631718.jpg"><img src="images/sessions/session4/635711303695631718.jpg" alt="صورة 12" loading="lazy"><a class="download-mini" href="images/sessions/session4/635711303695631718.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/726346246187078344.jpg"><img src="images/sessions/session4/726346246187078344.jpg" alt="صورة 13" loading="lazy"><a class="download-mini" href="images/sessions/session4/726346246187078344.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/74.jpg"><img src="images/sessions/session4/74.jpg" alt="صورة 14" loading="lazy"><a class="download-mini" href="images/sessions/session4/74.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/744571750938480087.jpg"><img src="images/sessions/session4/744571750938480087.jpg" alt="صورة 15" loading="lazy"><a class="download-mini" href="images/sessions/session4/744571750938480087.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/778067273151257446.jpg"><img src="images/sessions/session4/778067273151257446.jpg" alt="صورة 16" loading="lazy"><a class="download-mini" href="images/sessions/session4/778067273151257446.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/779193173073486651.jpg"><img src="images/sessions/session4/779193173073486651.jpg" alt="صورة 17" loading="lazy"><a class="download-mini" href="images/sessions/session4/779193173073486651.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/860398703859661736.jpg"><img src="images/sessions/session4/860398703859661736.jpg" alt="صورة 18" loading="lazy"><a class="download-mini" href="images/sessions/session4/860398703859661736.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/8d018a4ceef7155df6751d837b819087.jpg"><img src="images/sessions/session4/8d018a4ceef7155df6751d837b819087.jpg" alt="صورة 19" loading="lazy"><a class="download-mini" href="images/sessions/session4/8d018a4ceef7155df6751d837b819087.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/bridal portraits.jpg"><img src="images/sessions/session4/bridal portraits.jpg" alt="صورة 20" loading="lazy"><a class="download-mini" href="images/sessions/session4/bridal portraits.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/bride &amp; groom.jpg"><img src="images/sessions/session4/bride &amp; groom.jpg" alt="صورة 21" loading="lazy"><a class="download-mini" href="images/sessions/session4/bride &amp; groom.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/bride and groom.jpg"><img src="images/sessions/session4/bride and groom.jpg" alt="صورة 22" loading="lazy"><a class="download-mini" href="images/sessions/session4/bride and groom.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/c36bf97edb9dba54ca70939c4e86f652.jpg"><img src="images/sessions/session4/c36bf97edb9dba54ca70939c4e86f652.jpg" alt="صورة 23" loading="lazy"><a class="download-mini" href="images/sessions/session4/c36bf97edb9dba54ca70939c4e86f652.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/c6f9249742b3d51dc9673c4b4163125e.jpg"><img src="images/sessions/session4/c6f9249742b3d51dc9673c4b4163125e.jpg" alt="صورة 24" loading="lazy"><a class="download-mini" href="images/sessions/session4/c6f9249742b3d51dc9673c4b4163125e.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/ddb80ec862a6578708c1de3d818067ae.jpg"><img src="images/sessions/session4/ddb80ec862a6578708c1de3d818067ae.jpg" alt="صورة 25" loading="lazy"><a class="download-mini" href="images/sessions/session4/ddb80ec862a6578708c1de3d818067ae.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/f1e3f9e9a3715e976e13115fb7f060fd.jpg"><img src="images/sessions/session4/f1e3f9e9a3715e976e13115fb7f060fd.jpg" alt="صورة 26" loading="lazy"><a class="download-mini" href="images/sessions/session4/f1e3f9e9a3715e976e13115fb7f060fd.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/Timeless Black &amp; White Wedding Photography _ Elegant Couple Editorial Moment.jpg"><img src="images/sessions/session4/Timeless Black &amp; White Wedding Photography _ Elegant Couple Editorial Moment.jpg" alt="صورة 27" loading="lazy"><a class="download-mini" href="images/sessions/session4/Timeless Black &amp; White Wedding Photography _ Elegant Couple Editorial Moment.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/Wedding photo inspo.jpg"><img src="images/sessions/session4/Wedding photo inspo.jpg" alt="صورة 28" loading="lazy"><a class="download-mini" href="images/sessions/session4/Wedding photo inspo.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/Wedding photos.jpg"><img src="images/sessions/session4/Wedding photos.jpg" alt="صورة 29" loading="lazy"><a class="download-mini" href="images/sessions/session4/Wedding photos.jpg" download aria-label="تحميل الصورة">↓</a></figure><figure class="gallery-item" data-src="images/sessions/session4/Wedding pictures.jpg"><img src="images/sessions/session4/Wedding pictures.jpg" alt="صورة 30" loading="lazy"><a class="download-mini" href="images/sessions/session4/Wedding pictures.jpg" download aria-label="تحميل الصورة">↓</a></figure></main>
+<div class="gallery-lightbox" role="dialog" aria-modal="true"><button class="lightbox-close">×</button><a class="lightbox-download" href="#" download>↓</a><button class="lightbox-prev">‹</button><img id="galleryViewer" src="" alt="الصورة المختارة"><button class="lightbox-next">›</button><div class="lightbox-meta" id="galleryCounter"></div></div>
+      <button class="cinema-launch" id="cinemaLaunch" type="button" aria-label="مشاهدة السيشن كفيلم">
+        <span class="cinema-play">▶</span>
+        <span>مشاهدة السيشن كفيلم</span>
+      </button>
+    
+
+<div class="cinema-overlay" id="cinemaOverlay" aria-hidden="true">
+  <div class="cinema-top">
+    <div class="cinema-title">السيشن 4</div>
+    <div class="cinema-counter" id="cinemaCounter">1 / 30</div>
+  </div>
+
+  <button class="cinema-close" id="cinemaClose" type="button" aria-label="إغلاق">×</button>
+
+  <button class="cinema-nav cinema-prev" id="cinemaPrev" type="button" aria-label="الصورة السابقة">‹</button>
+
+  <div class="cinema-stage">
+    <div class="cinema-photo-wrap">
+      <img id="cinemaPhoto" src="" alt="">
+    </div>
+  </div>
+
+  <button class="cinema-nav cinema-next" id="cinemaNext" type="button" aria-label="الصورة التالية">›</button>
+
+  <div class="cinema-bottom">
+    <div class="cinema-controls">
+      <button class="cinema-control" id="cinemaPlay" type="button" aria-label="إيقاف العرض">Ⅱ</button>
+      <button class="cinema-control" id="cinemaDownload" type="button" aria-label="تحميل الصورة">↓</button>
+    </div>
+    <div class="cinema-progress"><span id="cinemaProgress"></span></div>
+    <div class="cinema-hint">← → للتنقل &nbsp; • &nbsp; Space تشغيل / إيقاف &nbsp; • &nbsp; Esc خروج</div>
+  </div>
+</div>
+
+<script>
+(()=>{const items=[...document.querySelectorAll('.gallery-item')],box=document.querySelector('.gallery-lightbox'),img=document.querySelector('#galleryViewer'),counter=document.querySelector('#galleryCounter'),dl=document.querySelector('.lightbox-download');let i=0;
+function show(n){i=(n+items.length)%items.length;img.src=items[i].dataset.src;dl.href=items[i].dataset.src;counter.textContent=(i+1)+' / '+items.length;box.classList.add('open');document.body.style.overflow='hidden'}
+function close(){box.classList.remove('open');document.body.style.overflow=''}
+items.forEach((el,n)=>el.addEventListener('click',e=>{if(!e.target.closest('.download-mini'))show(n)}));
+document.querySelector('.lightbox-close').onclick=close;document.querySelector('.lightbox-prev').onclick=()=>show(i-1);document.querySelector('.lightbox-next').onclick=()=>show(i+1);
+document.addEventListener('keydown',e=>{if(!box.classList.contains('open'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')show(i-1);if(e.key==='ArrowRight')show(i+1)});box.onclick=e=>{if(e.target===box)close()};})();
+</script>
+<script id="cinema-script">
+(function(){
+  const images = ["images/sessions/session4/1023654190323935086.jpg", "images/sessions/session4/1113092864237870432.jpg", "images/sessions/session4/1fb8f3d4954ae157a373582797ffbb6a.jpg", "images/sessions/session4/295337688085142286.jpg", "images/sessions/session4/368098969565459644.jpg", "images/sessions/session4/4777.jpg", "images/sessions/session4/478648266667275761.jpg", "images/sessions/session4/50f9b194e47b8446e0b0f169a042e5d5.jpg", "images/sessions/session4/546131892330156063.jpg", "images/sessions/session4/554927985360550297.jpg", "images/sessions/session4/574701602467697040.jpg", "images/sessions/session4/635711303695631718.jpg", "images/sessions/session4/726346246187078344.jpg", "images/sessions/session4/74.jpg", "images/sessions/session4/744571750938480087.jpg", "images/sessions/session4/778067273151257446.jpg", "images/sessions/session4/779193173073486651.jpg", "images/sessions/session4/860398703859661736.jpg", "images/sessions/session4/8d018a4ceef7155df6751d837b819087.jpg", "images/sessions/session4/bridal portraits.jpg", "images/sessions/session4/bride &amp; groom.jpg", "images/sessions/session4/bride and groom.jpg", "images/sessions/session4/c36bf97edb9dba54ca70939c4e86f652.jpg", "images/sessions/session4/c6f9249742b3d51dc9673c4b4163125e.jpg", "images/sessions/session4/ddb80ec862a6578708c1de3d818067ae.jpg", "images/sessions/session4/f1e3f9e9a3715e976e13115fb7f060fd.jpg", "images/sessions/session4/Timeless Black &amp; White Wedding Photography _ Elegant Couple Editorial Moment.jpg", "images/sessions/session4/Wedding photo inspo.jpg", "images/sessions/session4/Wedding photos.jpg", "images/sessions/session4/Wedding pictures.jpg"];
+  const overlay = document.getElementById('cinemaOverlay');
+  const launch = document.getElementById('cinemaLaunch');
+  const closeBtn = document.getElementById('cinemaClose');
+  const prevBtn = document.getElementById('cinemaPrev');
+  const nextBtn = document.getElementById('cinemaNext');
+  const playBtn = document.getElementById('cinemaPlay');
+  const downloadBtn = document.getElementById('cinemaDownload');
+  const photo = document.getElementById('cinemaPhoto');
+  const counter = document.getElementById('cinemaCounter');
+  const progress = document.getElementById('cinemaProgress');
+
+  if(!overlay || !launch || !photo) return;
+
+  let current = 0;
+  let playing = true;
+  let timer = null;
+  const DURATION = 4200;
+
+  function render(){
+    photo.classList.remove('is-visible');
+    const nextSrc = images[current];
+    photo.onload = () => requestAnimationFrame(() => photo.classList.add('is-visible'));
+    photo.src = nextSrc;
+    photo.alt = 'السيشن 4 — صورة ' + (current + 1);
+    counter.textContent = (current + 1) + ' / ' + images.length;
+    progress.style.width = (((current + 1) / images.length) * 100) + '%';
+  }
+
+  function stopTimer(){
+    if(timer) clearTimeout(timer);
+    timer = null;
+  }
+
+  function schedule(){
+    stopTimer();
+    if(!playing) return;
+    timer = setTimeout(() => {
+      current = (current + 1) % images.length;
+      render();
+      schedule();
+    }, DURATION);
+  }
+
+  function openCinema(){
+    current = 0;
+    playing = true;
+    playBtn.textContent = 'Ⅱ';
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+    render();
+    schedule();
+  }
+
+  function closeCinema(){
+    stopTimer();
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  function go(delta){
+    current = (current + delta + images.length) % images.length;
+    render();
+    schedule();
+  }
+
+  launch.addEventListener('click', openCinema);
+  closeBtn.addEventListener('click', closeCinema);
+  prevBtn.addEventListener('click', () => go(-1));
+  nextBtn.addEventListener('click', () => go(1));
+
+  playBtn.addEventListener('click', () => {
+    playing = !playing;
+    playBtn.textContent = playing ? 'Ⅱ' : '▶';
+    schedule();
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.href = images[current];
+    a.download = images[current].split('/').pop() || 'photo.jpg';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if(!overlay.classList.contains('is-open')) return;
+    if(e.key === 'Escape') closeCinema();
+    else if(e.key === 'ArrowRight') go(1);
+    else if(e.key === 'ArrowLeft') go(-1);
+    else if(e.code === 'Space') {
+      e.preventDefault();
+      playBtn.click();
+    }
+  });
+
+  // Swipe support on mobile.
+  let touchX = null;
+  overlay.addEventListener('touchstart', e => {
+    touchX = e.changedTouches[0].clientX;
+  }, {passive:true});
+  overlay.addEventListener('touchend', e => {
+    if(touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    touchX = null;
+    if(Math.abs(dx) > 45) go(dx < 0 ? 1 : -1);
+  }, {passive:true});
+})();
+</script>
+
+</body></html>
