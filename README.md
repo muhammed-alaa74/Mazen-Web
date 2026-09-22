@@ -64,7 +64,7 @@ Ready for GitHub Pages and other static hosting platforms.
 ## Local Setup
 
 ```bash
-git clone YOUR_REPOSITORY_URL
+git clone https://github.com/muhammed-alaa74/Mazen-Web.git
 ```
 
 Open `index.html` in your browser.
